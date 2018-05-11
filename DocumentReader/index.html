@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <!-- Generator: Radiate 4.7.8, HTML Exporter, http://www.velara3.com -->
+        <title>Document</title>
+		<!--header_start-->
+		<!--header_end-->
+		<!--scripts_start-->
+		<!--scripts_end-->
+		<!--stylesheets_start-->
+		<!--stylesheets_end-->
+		<!--styles_start-->
+		<style type="text/css">
+		#stopButton  {
+			position:absolute;
+			width:800px;
+			height:500px;
+			display:inline-block;
+		}
+
+		#RichText1786  {
+			position:absolute;
+			top:21px;
+			left:21px;
+			margin-top:-0.2em;
+		}
+
+		#RichText1786 > :first-child {
+			margin-top:0px;
+		}
+
+		#textarea  {
+			position:absolute;
+			top:100px;
+			bottom:100px;
+			left:20px;
+			right:20px;
+			width:760px;
+			display:inline-block;
+			height:300px;
+			display:inline-block;
+			margin-top:-0.2em;
+		}
+
+		#textarea > :first-child {
+			margin-top:0px;
+		}
+
+		#HGroup2925  {
+			position:absolute;
+			top:409.5px;
+			left:21px;
+			min-width:20px;
+			min-height:20px;
+			overflow:visible;
+			text-align:left;
+		}
+
+		#playButton  {
+			position:relative;
+			display:inline-block;
+			vertical-align:middle;
+			margin-right:2px;
+		}
+
+		#pauseButton  {
+			position:relative;
+			display:inline-block;
+			vertical-align:middle;
+			margin-right:2px;
+		}
+
+		#resumeButton  {
+			position:relative;
+			display:inline-block;
+			vertical-align:middle;
+			margin-right:2px;
+		}
+
+		#stopButton  {
+			position:relative;
+			display:inline-block;
+			vertical-align:middle;
+		}
+
+
+
+		*, *:before, *:after {
+			-moz-box-sizing:border-box;
+			-webkit-box-sizing:border-box;
+			box-sizing:border-box;
+			margin:0;
+			padding:0;
+		}
+
+		html, body {
+			width:100%;
+			height:100%;
+			margin:0;
+			padding:0;
+		}
+
+
+		</style>
+		<!--styles_end-->
+    </head>
+    <body>
+		<!--body_start-->
+		<div id="RichText1786">
+			<P ALIGN="left"><FONT FACE="Verdana" COLOR="#000000" LETTERSPACING="0" KERNING="1" style="font-size:12px"><FONT FACE="Trattatello" style="font-size:48px">Speech Software 2000</FONT></FONT></P>
+		</div>
+		<textarea id="textarea"></textarea>
+		<div id="HGroup2925">
+			<input id="playButton" type="button" value="Play"/>
+			<input id="pauseButton" type="button" value="Pause"/>
+			<input id="resumeButton" type="button" value="Resume NOW"/>
+			<input id="stopfButton" type="button" value="poop"/>
+			<input id="startButton" type="button" value="Start"/>
+			<span style='display:inline-block;height:100%;width:0;vertical-align:middle;'></span>
+		</div>
+		<script>
+		var utterance = new SpeechSynthesisUtterance();
+		utterance.lang = 'en-UK';
+		utterance.rate = 1;
+
+		document.getElementById('playButton').onclick = function(){
+		    var text = document.getElementById('textarea').value;
+		    // create the utterance on play in case user called stop
+		    // reference https://stackoverflow.com/a/47276578/441016
+		    utterance = new SpeechSynthesisUtterance();
+		    utterance.onboundary = onboundaryHandler;
+		    utterance.text = text;
+		    speechSynthesis.speak(utterance);
+		};
+
+		document.getElementById('pauseButton').onclick = function(){
+		    if (speechSynthesis) {
+		      speechSynthesis.pause();
+		    }
+		};
+
+		document.getElementById('resumeButton').onclick = function(){
+		    if (speechSynthesis) {
+		      speechSynthesis.resume();
+		    }
+		};
+
+		document.getElementById('stopButton').onclick = function(){
+		    if (speechSynthesis) {
+		      speechSynthesis.cancel();
+		    }
+		};
+
+		function onboundaryHandler(event){
+		    var textarea = document.getElementById('textarea');
+		    var value = textarea.value;
+		    var index = event.charIndex;
+		    var word = getWordAt(value, index);
+		    var anchorPosition = getWordStart(value, index);
+		    var activePosition = anchorPosition + word.length;
+
+		    textarea.focus();
+
+		    if (textarea.setSelectionRange) {
+		       textarea.setSelectionRange(anchorPosition, activePosition);
+		    }
+		    else {
+		       var range = textarea.createTextRange();
+		       range.collapse(true);
+		       range.moveEnd('character', activePosition);
+		       range.moveStart('character', anchorPosition);
+		       range.select();
+		    }
+		};
+
+		// Get the word of a string given the string and index
+		function getWordAt(str, pos) {
+		    // Perform type conversions.
+		    str = String(str);
+		    pos = Number(pos) >>> 0;
+
+		    // Search for the word's beginning and end.
+		    var left = str.slice(0, pos + 1).search(/\S+$/),
+		        right = str.slice(pos).search(/\s/);
+
+		    // The last word in the string is a special case.
+		    if (right < 0) {
+		        return str.slice(left);
+		    }
+
+		    // Return the word, using the located bounds to extract it from the string.
+		    return str.slice(left, right + pos);
+		}
+
+		// Get the position of the beginning of the word
+		function getWordStart(str, pos) {
+		    str = String(str);
+		    pos = Number(pos) >>> 0;
+
+		    // Search for the word's beginning
+		    var start = str.slice(0, pos + 1).search(/\S+$/);
+		    return start;
+		}
+		</script>
+		<!--body_end-->
+    </body>
+</html>
